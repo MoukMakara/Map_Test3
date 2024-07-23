@@ -150,8 +150,5 @@ const PoiMarkers = (props) => {
   );
 };
 
-// root
-const root = createRoot(document.getElementById("app"));
-root.render(<App />);
 
 export default App;

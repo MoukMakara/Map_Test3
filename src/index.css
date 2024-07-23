@@ -1,0 +1,11 @@
+/* index.css */
+#root {
+  display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        margin-top: 50px;
+        width: 50vw;
+        height: 50vh;
+}
+
