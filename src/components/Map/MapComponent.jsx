@@ -26,10 +26,16 @@ const MapComponent = () => {
 
         const fetchedLocations = allClubs.map((item) => ({
           key: item.sport_name,
-          location: {
-            lat: parseFloat(item.latitude),
-            lng: parseFloat(item.longitude),
-          },
+          latitude: parseFloat(item.latitude),
+          longitude: parseFloat(item.longitude),
+          image: item.image,
+          sport_name: item.sport_name,
+          description: item.description,
+          price: item.price,
+          reviews: item.reviews,
+          seat_number: item.seat_number,
+          skill_level: item.skill_level,
+          contact_info: item.contact_info,
         }));
 
         setLocations(fetchedLocations);
@@ -39,7 +45,7 @@ const MapComponent = () => {
     };
 
     fetchClubsAndLocations();
-  }, [apiUrl, clubs]);
+  }, [apiUrl]);
 
   const formatDistance = (distance) => (distance / 1000).toFixed(2);
 
@@ -79,6 +85,7 @@ const MapComponent = () => {
           pois={locations}
           radius={radius}
           formatDistance={formatDistance}
+          clubs={clubs}
         />
       </Map>
     </APIProvider>

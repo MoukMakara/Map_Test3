@@ -5,11 +5,16 @@ import { Provider } from "react-redux";
 import "./index.css";
 import store from "./redux/store";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import DetailPage from "./components/Map/DetailPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/detailPage",
+    element: <DetailPage />,
   },
 ]);
 
