@@ -72,17 +72,22 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
           key="current-location"
           position={currentLocation}
           icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-            // label="You are here"
+          // label="You are here"
         />
       )}
       {currentLocation && (
-        <div>
+        <div className="grid grid-cols-2 gap-4 p-4">
           {Object.entries(distances).map(
             ([key, distance]) =>
               parseFloat(formatDistance(distance)) < radius && (
-                <div key={key}>
-                  <p>
-                    Distance to {key}: {formatDistance(distance)} km
+                <div
+                  key={key}
+                  className="p-2 bg-gray-50 border border-gray-300 rounded-md"
+                >
+                  <p className="text-sm text-gray-700">
+                    Distance to{" "}
+                    <span className="font-semibold text-blue-600">{key}</span>:{" "}
+                    {formatDistance(distance)} km
                   </p>
                 </div>
               )

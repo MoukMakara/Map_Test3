@@ -29,7 +29,6 @@ const MapComponent = () => {
           location: {
             lat: parseFloat(item.latitude),
             lng: parseFloat(item.longitude),
-            
           },
         }));
 
@@ -40,7 +39,7 @@ const MapComponent = () => {
     };
 
     fetchClubsAndLocations();
-  }, [apiUrl,clubs]);
+  }, [apiUrl, clubs]);
 
   const formatDistance = (distance) => (distance / 1000).toFixed(2);
 
@@ -62,12 +61,7 @@ const MapComponent = () => {
           )
         }
       >
-        <PointMarker
-          pois={locations}
-          radius={radius}
-          formatDistance={formatDistance}
-        />
-        <div>
+        <div className="flex items-center space-x-3 p-4">
           <input
             type="number"
             value={radius}
@@ -77,10 +71,15 @@ const MapComponent = () => {
             }}
             step="0.1"
             min="0"
-            style={{ marginBottom: "10px" }}
+            className="border-2 border-gray-300 rounded-md text-center w-full py-3"
           />
-          <label>Radius (km)</label>
+          <label className="text-gray-700 text-center">Radius (km)</label>
         </div>
+        <PointMarker
+          pois={locations}
+          radius={radius}
+          formatDistance={formatDistance}
+        />
       </Map>
     </APIProvider>
   );
