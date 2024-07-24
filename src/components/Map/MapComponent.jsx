@@ -22,15 +22,19 @@ const MapComponent = () => {
           allClubs = [...allClubs, ...data.results];
           nextUrl = data.next;
         }
+
+        // Debugging: Check fetched data
+        console.log("Fetched Clubs:", allClubs);
+
         setClubs(allClubs);
 
         const fetchedLocations = allClubs.map((item, index) => ({
           key: index,
+          id: item.id, // Ensure `id` exists or change as needed
           sport_name: item.sport_name,
           latitude: parseFloat(item.latitude),
           longitude: parseFloat(item.longitude),
           image: item.image,
-          sport_name: item.sport_name,
           description: item.description,
           price: item.price,
           reviews: item.reviews,
@@ -39,7 +43,9 @@ const MapComponent = () => {
           contact_info: item.contact_info,
         }));
 
-        console.log("Data:", fetchedLocations);
+        // Debugging: Check locations
+        console.log("Processed Locations:", fetchedLocations);
+
         setLocations(fetchedLocations);
       } catch (error) {
         console.error("Error fetching data:", error);
