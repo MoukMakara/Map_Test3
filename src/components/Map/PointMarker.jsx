@@ -110,7 +110,7 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
             transform: "translateX(-50%)",
             bottom: "10px",
             width: "300px",
-            cursor: "pointer", // Add a pointer cursor to indicate it's clickable
+            cursor: "pointer",
           }}
           onClick={() => navigate("/detailPage", { state: selectedPoi })}
         >

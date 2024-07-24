@@ -1,7 +1,8 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const DetailPage = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const poi = location.state;
 
@@ -13,8 +14,14 @@ const DetailPage = () => {
     poi.contact_info && Object.values(poi.contact_info).some((value) => value);
 
   return (
-    <div className="flex items-center justify-center h-screen ">
-      <div className="max-w-4xl mx-auto p-8 border border-gray-300 rounded-lg shadow-lg bg-white mt-64">
+    <div className="flex items-center justify-center h-screen">
+      <div className="max-w-4xl mx-auto p-8 border border-gray-300 rounded-lg shadow-lg bg-white mt-64 relative">
+        <button
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          onClick={() => navigate(-1)}
+        >
+          &times;
+        </button>
         <h2 className="text-3xl font-bold text-gray-900 mb-6">
           {poi.sport_name}
         </h2>
