@@ -38,6 +38,7 @@ const MapComponent = () => {
           contact_info: item.contact_info,
         }));
 
+        console.log("Data:",fetchedLocations)
         setLocations(fetchedLocations);
       } catch (error) {
         console.error("Error fetching data:", error);
