@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Marker } from "@vis.gl/react-google-maps";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const PointMarker = ({ pois, radius, formatDistance }) => {
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -74,14 +74,16 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
         <Marker
           key={poi.id}
           position={{ lat: poi.latitude, lng: poi.longitude }}
+          onMouseOver={() => setHoveredPoi(poi.key)}
+          onMouseOut={() => setHoveredPoi(null)}
           onClick={() => handleMarkerClick(poi)}
           icon={{
             url: `http://maps.google.com/mapfiles/ms/icons/${
               hoveredPoi === poi.key ? "orange" : "red"
             }-dot.png`,
             scaledSize: new window.google.maps.Size(
-              hoveredPoi === poi.key ? 40 : 32, 
-              hoveredPoi === poi.key ? 40 : 32 
+              hoveredPoi === poi.key ? 40 : 32,
+              hoveredPoi === poi.key ? 40 : 32
             ),
           }}
           label={{
@@ -95,7 +97,7 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
         <Marker
           key="current-location"
           position={currentLocation}
-          icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+          icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
         />
       )}
 
@@ -108,25 +110,32 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
             transform: "translateX(-50%)",
             bottom: "10px",
             width: "300px",
+            cursor: "pointer", // Add a pointer cursor to indicate it's clickable
           }}
+          onClick={() => navigate("/detailPage", { state: selectedPoi })}
         >
           <button
             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            onClick={handleClosePopUp}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClosePopUp();
+            }}
           >
             &times;
           </button>
-          <h3 className="text-xl font-semibold text-blue-700 mb-2">
-            {selectedPoi.sport_name}
-          </h3>
-          <img
-            src={selectedPoi.image}
-            alt={selectedPoi.sport_name}
-            className="w-full h-32 object-cover rounded-lg mb-3"
-          />
-          <p className="text-sm text-gray-600 mb-3">
-            Distance: {formatDistance(distances[selectedPoi.key])} km
-          </p>
+          <div>
+            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+              {selectedPoi.sport_name}
+            </h3>
+            <img
+              src={selectedPoi.image}
+              alt={selectedPoi.sport_name}
+              className="w-full h-32 object-cover rounded-lg mb-3"
+            />
+            <p className="text-sm text-gray-600 mb-3">
+              Distance: {formatDistance(distances[selectedPoi.key])} km
+            </p>
+          </div>
         </div>
       )}
 
@@ -136,7 +145,9 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
           {filteredPois.map((poi) => (
             <div
               key={poi.key}
-              className="p-4 bg-white border h-[200px] border-gray-200 rounded-lg shadow-lg flex flex-row space-x-4 cursor-pointer mb-5"
+              className={`p-4 bg-white border h-[200px] border-gray-200 rounded-lg shadow-lg flex flex-row space-x-4 cursor-pointer mb-5 transition-transform duration-300 ${
+                hoveredPoi === poi.key ? "transform scale-105" : ""
+              }`}
               onMouseEnter={() => setHoveredPoi(poi.key)}
               onMouseLeave={() => setHoveredPoi(null)}
               onClick={() => {
