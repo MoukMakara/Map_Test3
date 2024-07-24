@@ -89,7 +89,7 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
                 navigate("/detailPage", { state: poi });
               }}
             >
-              {console.log("Navigating to detail with POI:", poi)}
+              {console.log("Navigating to detail with POI:", poi.key)}
               <img
                 src={poi.image}
                 alt={poi.sport_name}

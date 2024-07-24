@@ -24,8 +24,9 @@ const MapComponent = () => {
         }
         setClubs(allClubs);
 
-        const fetchedLocations = allClubs.map((item) => ({
-          key: item.sport_name,
+        const fetchedLocations = allClubs.map((item, index) => ({
+          key: index,
+          sport_name: item.sport_name,
           latitude: parseFloat(item.latitude),
           longitude: parseFloat(item.longitude),
           image: item.image,
@@ -38,7 +39,7 @@ const MapComponent = () => {
           contact_info: item.contact_info,
         }));
 
-        console.log("Data:",fetchedLocations)
+        console.log("Data:", fetchedLocations);
         setLocations(fetchedLocations);
       } catch (error) {
         console.error("Error fetching data:", error);
