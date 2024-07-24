@@ -7,6 +7,7 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
   const [distances, setDistances] = useState({});
   const [filteredPois, setFilteredPois] = useState([]);
   const [selectedPoi, setSelectedPoi] = useState(null);
+  const [hoveredPoi, setHoveredPoi] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,8 +76,18 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
           position={{ lat: poi.latitude, lng: poi.longitude }}
           onClick={() => handleMarkerClick(poi)}
           icon={{
-            url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-            scaledSize: new window.google.maps.Size(32, 32),
+            url: `http://maps.google.com/mapfiles/ms/icons/${
+              hoveredPoi === poi.key ? "orange" : "red"
+            }-dot.png`,
+            scaledSize: new window.google.maps.Size(
+              hoveredPoi === poi.key ? 40 : 32, 
+              hoveredPoi === poi.key ? 40 : 32 
+            ),
+          }}
+          label={{
+            text: poi.sport_name,
+            color: "black",
+            fontSize: "9px",
           }}
         />
       ))}
@@ -126,6 +137,8 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
             <div
               key={poi.key}
               className="p-4 bg-white border h-[200px] border-gray-200 rounded-lg shadow-lg flex flex-row space-x-4 cursor-pointer mb-5"
+              onMouseEnter={() => setHoveredPoi(poi.key)}
+              onMouseLeave={() => setHoveredPoi(null)}
               onClick={() => {
                 console.log("Navigating to detail with POI:", poi.key); // Debugging line
                 navigate("/detailPage", { state: poi });
