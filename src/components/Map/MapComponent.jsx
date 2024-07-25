@@ -23,14 +23,11 @@ const MapComponent = () => {
           nextUrl = data.next;
         }
 
-        // Debugging: Check fetched data
-        console.log("Fetched Clubs:", allClubs);
-
         setClubs(allClubs);
 
         const fetchedLocations = allClubs.map((item, index) => ({
           key: index,
-          id: item.id, // Ensure `id` exists or change as needed
+          id: item.id,
           sport_name: item.sport_name,
           latitude: parseFloat(item.latitude),
           longitude: parseFloat(item.longitude),
@@ -42,9 +39,6 @@ const MapComponent = () => {
           skill_level: item.skill_level,
           contact_info: item.contact_info,
         }));
-
-        // Debugging: Check locations
-        console.log("Processed Locations:", fetchedLocations);
 
         setLocations(fetchedLocations);
       } catch (error) {
@@ -62,40 +56,45 @@ const MapComponent = () => {
       apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
       onLoad={() => console.log("Maps API has loaded.")}
     >
-      <Map
-        defaultZoom={13}
-        defaultCenter={{ lat: 11.578268759952971, lng: 104.90178553000196 }}
-        mapId="a2b2fd561b553426"
-        onCameraChanged={(ev) =>
-          console.log(
-            "camera changed:",
-            ev.detail.center,
-            "zoom:",
-            ev.detail.zoom
-          )
-        }
-      >
-        <div className="flex items-center space-x-3 p-4">
-          <input
-            type="number"
-            value={radius}
-            onChange={(e) => {
-              const value = parseFloat(e.target.value) || 0;
-              setRadius(value >= 0 ? value : 0);
-            }}
-            step="0.1"
-            min="0"
-            className="border-2 border-gray-300 rounded-md text-center w-full py-3"
+      <div className="flex">
+        <div className="w-2/3 p-4 overflow-y-auto" style={{ height: "100vh" }}>
+          <div className="flex items-center space-x-3 mb-4">
+            <input
+              type="number"
+              value={radius}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
+                setRadius(value >= 0 ? value : 0);
+              }}
+              step="0.1"
+              min="0"
+              className="border-2 border-gray-300 rounded-md text-center w-full py-3"
+            />
+            <label className="text-gray-700 text-center">Radius (km)</label>
+          </div>
+          <PointMarker
+            pois={locations}
+            radius={radius}
+            formatDistance={formatDistance}
+            clubs={clubs}
           />
-          <label className="text-gray-700 text-center">Radius (km)</label>
         </div>
-        <PointMarker
-          pois={locations}
-          radius={radius}
-          formatDistance={formatDistance}
-          clubs={clubs}
-        />
-      </Map>
+        <div className="flex-1">
+          <Map
+            defaultZoom={13}
+            defaultCenter={{ lat: 11.578268759952971, lng: 104.90178553000196 }}
+            mapId="a2b2fd561b553426"
+            onCameraChanged={(ev) =>
+              console.log(
+                "camera changed:",
+                ev.detail.center,
+                "zoom:",
+                ev.detail.zoom
+              )
+            }
+          />
+        </div>
+      </div>
     </APIProvider>
   );
 };

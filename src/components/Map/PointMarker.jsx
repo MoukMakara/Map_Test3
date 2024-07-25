@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Marker, InfoWindow } from "@vis.gl/react-google-maps";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,12 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
   const [filteredPois, setFilteredPois] = useState([]);
   const [hoveredPoi, setHoveredPoi] = useState(null);
   const [hoveredPoiImage, setHoveredPoiImage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const poisPerPage = 5;
   const navigate = useNavigate();
+  const timeoutRef = useRef(null);
+  const cardRefs = useRef({});
+  const scrollTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -63,7 +68,39 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
   const handleMarkerMouseOver = (poi) => {
     setHoveredPoi(poi);
     setHoveredPoiImage(poi.image);
+
+    // Calculate the page where the POI is located
+    const poiIndex = filteredPois.findIndex((item) => item.key === poi.key);
+    const poiPage = Math.floor(poiIndex / poisPerPage) + 1;
+
+    if (poiPage !== currentPage) {
+      setCurrentPage(poiPage);
+    } else {
+      if (cardRefs.current[poi.key]) {
+        cardRefs.current[poi.key].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }
   };
+
+  useEffect(() => {
+    if (hoveredPoi && cardRefs.current[hoveredPoi.key]) {
+      scrollTimeoutRef.current = setTimeout(() => {
+        cardRefs.current[hoveredPoi.key].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 300);
+    }
+
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [currentPage, hoveredPoi]);
 
   const handleMarkerMouseOut = () => {
     setHoveredPoi(null);
@@ -71,13 +108,34 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
   };
 
   const handleCardMouseEnter = (poi) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     setHoveredPoi(poi);
-    setHoveredPoiImage(poi.image);
   };
 
   const handleCardMouseLeave = () => {
-    setHoveredPoi(null);
-    setHoveredPoiImage(null);
+    timeoutRef.current = setTimeout(() => {
+      setHoveredPoi(null);
+    }, 200);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const indexOfLastPoi = currentPage * poisPerPage;
+  const indexOfFirstPoi = indexOfLastPoi - poisPerPage;
+  const currentPois = filteredPois.slice(indexOfFirstPoi, indexOfLastPoi);
+  const totalPages = Math.ceil(filteredPois.length / poisPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -87,7 +145,7 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
           key={poi.id}
           position={{ lat: poi.latitude, lng: poi.longitude }}
           onMouseOver={() => handleMarkerMouseOver(poi)}
-          onMouseOut={handleMarkerMouseOut}
+          // onMouseOut={handleMarkerMouseOut}
           icon={{
             url: `http://maps.google.com/mapfiles/ms/icons/${
               hoveredPoi?.key === poi.key ? "orange" : "red"
@@ -129,9 +187,10 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
       )}
 
       <div className="p-4">
-        {filteredPois.map((poi) => (
+        {currentPois.map((poi) => (
           <div
             key={poi.key}
+            ref={(el) => (cardRefs.current[poi.key] = el)}
             className={`p-4 bg-white border h-[200px] border-gray-200 rounded-lg shadow-lg flex flex-row space-x-4 cursor-pointer mb-5 transition-transform duration-300 ${
               hoveredPoi?.key === poi.key ? "transform scale-105" : ""
             }`}
@@ -165,6 +224,23 @@ const PointMarker = ({ pois, radius, formatDistance }) => {
               </div>
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center space-x-2 mt-4">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => handlePageChange(index + 1)}
+            className={`px-4 py-2 rounded-md ${
+              currentPage === index + 1
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
+            }`}
+          >
+            {index + 1}
+          </button>
         ))}
       </div>
     </>

@@ -7,6 +7,10 @@
   align-items: center;
   margin: 0 auto;
   margin-top: 50px;
-  width: 50vw;
-  height: 50vh;
+  /* width: 50vw;
+  height: 50vh; */
+}
+/* Hide the close button in InfoWindow */
+.info-window-content .gm-ui-hover-effect {
+  display: none;
 }
